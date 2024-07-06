@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Niveles de Llenado de Depósitos</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .chart-container {
+            width: 90%;
+            max-width: 900px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Niveles de Llenado de Depósitos</h1>
+    <div class="chart-container">
+        <canvas id="fillLevelChart" width="400" height="200"></canvas>
+    </div>
+    <script>
+        const socket = io();
+        const MAX_ENTRIES = 20;
+
+        async function fetchData() {
+            const response = await fetch('/api/data');
+            const data = await response.json();
+            return data.slice(0, MAX_ENTRIES).reverse();
+        }
+
+        async function renderChart() {
+            const data = await fetchData();
+
+            const timestamps = data.map(entry => new Date(entry.timestamp).toLocaleString());
+            const fillLevels = data.map(entry => entry.nivelLlenado);
+
+            // Fill Level Chart
+            const fillLevelCtx = document.getElementById('fillLevelChart').getContext('2d');
+            window.fillLevelChart = new Chart(fillLevelCtx, {
+                type: 'line',
+                data: {
+                    labels: timestamps,
+                    datasets: [{
+                        label: 'Nivel de Llenado (%)',
+                        data: fillLevels,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            position: 'left',
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChart(chart, entry) {
+            const newTimestamp = new Date(entry.timestamp).toLocaleString();
+            const dataLength = chart.data.labels.length;
+
+            if (dataLength >= MAX_ENTRIES) {
+                chart.data.labels.shift();
+                chart.data.datasets[0].data.shift();
+            }
+
+            chart.data.labels.push(newTimestamp);
+            chart.data.datasets[0].data.push(entry.nivelLlenado);
+            chart.update();
+        }
+
+        renderChart();
+
+        socket.on('new_data', function(entry) {
+            updateChart(window.fillLevelChart, entry);
+        });
+    </script>
+</body>
+</html>
