@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Nivel de llenado -->
+    <TextView
+        android:id="@+id/tvNivel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nivel de Llenado:"
+        android:textSize="24sp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Texto "Historial" -->
+    <TextView
+        android:id="@+id/tvHistorialTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Historial"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Lista de historial -->
+    <ListView
+        android:id="@+id/listViewHistorial"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Última actualización -->
+    <TextView
+        android:id="@+id/tvUltimaActualizacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Última actualización:"
+        android:layout_marginTop="16dp" />
+
+    <!-- Botón para consultar -->
+    <Button
+        android:id="@+id/btnConsultar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Consultar"
+        android:layout_marginTop="16dp" />
+</LinearLayout>
